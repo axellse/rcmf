@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCMF Specification Version 1</title>
+    <style>
+        body {
+            font-family: monospace;
+            line-height: 1.6;
+            margin: 40px auto;
+            max-width: 800px;
+            color: #333;
+            background-color: #fafafa;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #000;
+        }
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2em;
+        }
+        .header-left, .header-right {
+            display: flex;
+            flex-direction: column;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .center {
+            text-align: center;
+            margin: 2em 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 1em 0;
+            font-family: inherit;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <span>Author: axell</span>
+        </div>
+        <div class="header-right">
+            <span><a href="mailto:me@axell.me">me@axell.me</a></span>
+            <span>May 27, 2026</span>
+        </div>
+    </div>
+
+    <div class="center">
+        <h2>RCMF (Roblox Community Modding Format) Version 1</h2>
+    </div>
+
+    <h3>Abstract</h3>
+    <p>This document specifies version 1 of the RCMF (Roblox Community Modding Format) file format. RCMF is a JSON-based file format used to define and package modifications for the Roblox client. It allows defining rules for modifying files, asset types, and specific asset IDs.</p>
+
+    <h2>1. Introduction</h2>
+    <p>The Roblox Community Modding Format (RCMF) is designed to streamline the process of modifying the Roblox client. By defining changes as a declarative set of rules serialized into a JSON configuration format, mod developers can reliably distribute modifications to files on disk, Roblox asset IDs, and entire asset types.</p>
+
+    <h2>2. Terminology</h2>
+    <p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.</p>
+
+    <h2>3. File Format Structure</h2>
+    <p>An RCMF file is a well-formed JSON document containing a single serialized root object.</p>
+
+    <h3>3.1. Root Object</h3>
+    <p>The root object of an RCMF file.</p>
+    <ul>
+        <li><strong>spec</strong> (string): REQUIRED. Defines the RCMF specification version used. It MUST be a link to a document describing the spec. For this version, it MUST be set to <code>"https://rcmf.axell.me/v1"</code>.</li>
+        <li><strong>rules</strong> (array of rule objects): REQUIRED. An array that describes the modification rules of this mod.</li>
+    </ul>
+
+    <h3>3.2. Rule Object</h3>
+    <p>Rules describe what to modify or replace (sources) and what should be changed (data).</p>
+    <ul>
+        <li><strong>sources</strong> (sources object): REQUIRED. Describes the sources that this rule applies to.</li>
+        <li><strong>data</strong> (data object): REQUIRED. Describes the data used to replace or modify the matched sources.</li>
+    </ul>
+
+    <h3>3.3. Sources Object</h3>
+    <p>Describes what a rule should modify or replace. A rule may target multiple sources of multiple different types.</p>
+    <ul>
+        <li><strong>expressions</strong> (array of strings): OPTIONAL. Reserved for future use. Implementations SHOULD ignore this field.</li>
+        <li><strong>ids</strong> (array of integers): OPTIONAL. A list of Roblox asset IDs to modify.</li>
+        <li><strong>types</strong> (array of integers): OPTIONAL. A list of asset types to modify, represented as asset type IDs.</li>
+        <li><strong>files</strong> (array of strings): OPTIONAL. A list of files on disk to modify. These paths are relative to the Roblox installation directory (e.g., <code>C:\Users\ms\AppData\Local\Roblox\Versions\version-ec412128eba3476e</code>).
+        </li>
+    </ul>
+
+    <h3>3.4. Data Object</h3>
+    <p>Describes what a rule should replace its sources with, or how to modify its sources.</p>
+    <ul>
+        <li><strong>blob</strong> (string, base64-encoded bytes): OPTIONAL. Represents a binary object to completely replace the targeted sources.</li>
+        <li><strong>key</strong> (string): OPTIONAL. Describes a specific part of an XML or JSON document to modify. If the target is an XML document, "key" MUST be an XPath expression. If the target is a JSON document, "key" MUST be a dot-separated path. This field SHOULD be empty when "blob" is set.</li>
+        <li><strong>value</strong> (string): OPTIONAL. Describes the value to set the target defined by "key" to. It MUST be present if "key" is utilized to modify a document.</li>
+    </ul>
+
+    <h2>4. Asset Type IDs Appendix</h2>
+    <p>Asset Type IDs correspond to various resource formats used by Roblox. This list has been copied from the Roblox wiki and may not be fully up-to-date.</p>
+    <table>
+        <tr><th>Name</th><th>Value</th></tr>
+        <tr><td>Image</td><td>1</td></tr>
+        <tr><td>TShirt</td><td>2</td></tr>
+        <tr><td>Audio</td><td>3</td></tr>
+        <tr><td>Mesh</td><td>4</td></tr>
+        <tr><td>Lua</td><td>5</td></tr>
+        <tr><td>Hat</td><td>8</td></tr>
+        <tr><td>Place</td><td>9</td></tr>
+        <tr><td>Model</td><td>10</td></tr>
+        <tr><td>Shirt</td><td>11</td></tr>
+        <tr><td>Pants</td><td>12</td></tr>
+        <tr><td>Decal</td><td>13</td></tr>
+        <tr><td>Head</td><td>17</td></tr>
+        <tr><td>Face</td><td>18</td></tr>
+        <tr><td>Gear</td><td>19</td></tr>
+        <tr><td>Badge</td><td>21</td></tr>
+        <tr><td>Animation</td><td>24</td></tr>
+        <tr><td>Torso</td><td>27</td></tr>
+        <tr><td>RightArm</td><td>28</td></tr>
+        <tr><td>LeftArm</td><td>29</td></tr>
+        <tr><td>LeftLeg</td><td>30</td></tr>
+        <tr><td>RightLeg</td><td>31</td></tr>
+        <tr><td>Package</td><td>32</td></tr>
+        <tr><td>GamePass</td><td>34</td></tr>
+        <tr><td>Plugin</td><td>38</td></tr>
+        <tr><td>MeshPart</td><td>40</td></tr>
+        <tr><td>HairAccessory</td><td>41</td></tr>
+        <tr><td>FaceAccessory</td><td>42</td></tr>
+        <tr><td>NeckAccessory</td><td>43</td></tr>
+        <tr><td>ShoulderAccessory</td><td>44</td></tr>
+        <tr><td>FrontAccessory</td><td>45</td></tr>
+        <tr><td>BackAccessory</td><td>46</td></tr>
+        <tr><td>WaistAccessory</td><td>47</td></tr>
+        <tr><td>ClimbAnimation</td><td>48</td></tr>
+        <tr><td>DeathAnimation</td><td>49</td></tr>
+        <tr><td>FallAnimation</td><td>50</td></tr>
+        <tr><td>IdleAnimation</td><td>51</td></tr>
+        <tr><td>JumpAnimation</td><td>52</td></tr>
+        <tr><td>RunAnimation</td><td>53</td></tr>
+        <tr><td>SwimAnimation</td><td>54</td></tr>
+        <tr><td>WalkAnimation</td><td>55</td></tr>
+        <tr><td>PoseAnimation</td><td>56</td></tr>
+        <tr><td>EarAccessory</td><td>57</td></tr>
+        <tr><td>EyeAccessory</td><td>58</td></tr>
+        <tr><td>EmoteAnimation</td><td>61</td></tr>
+        <tr><td>Video</td><td>62</td></tr>
+        <tr><td>TShirtAccessory</td><td>64</td></tr>
+        <tr><td>ShirtAccessory</td><td>65</td></tr>
+        <tr><td>PantsAccessory</td><td>66</td></tr>
+        <tr><td>JacketAccessory</td><td>67</td></tr>
+        <tr><td>SweaterAccessory</td><td>68</td></tr>
+        <tr><td>ShortsAccessory</td><td>69</td></tr>
+        <tr><td>LeftShoeAccessory</td><td>70</td></tr>
+        <tr><td>RightShoeAccessory</td><td>71</td></tr>
+        <tr><td>DressSkirtAccessory</td><td>72</td></tr>
+        <tr><td>FontFamily</td><td>73</td></tr>
+        <tr><td>EyebrowAccessory</td><td>76</td></tr>
+        <tr><td>EyelashAccessory</td><td>77</td></tr>
+        <tr><td>MoodAnimation</td><td>78</td></tr>
+        <tr><td>DynamicHead</td><td>79</td></tr>
+        <tr><td>FaceMakeup</td><td>88</td></tr>
+        <tr><td>LipMakeup</td><td>89</td></tr>
+        <tr><td>EyeMakeup</td><td>90</td></tr>
+        <tr><td>VoxelFragment</td><td>91</td></tr>
+    </table>
+
+    <h2>5. Author's Address</h2>
+    <address>
+        axell<br>
+        EMail: <a href="mailto:me@axell.me">me@axell.me</a>
+    </address>
+
+</body>
+</html>
