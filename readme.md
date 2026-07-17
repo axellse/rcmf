@@ -4,8 +4,6 @@ This repo holds the Roblox Community Modding Format specification(s).
 RCMF is a JSON-based file format used to define and package modifications for the Roblox client. It allows defining rules for modifying files, asset types, and specific asset IDs. The spec(s) are written somewhat like RFCs.
 
 This repository is hosted statically on [rcmf.axell.me](https://rcmf.axell.me).
-## examples
-You may find examples in `./examples`. Example contributions are more than welcome.
 ## implementation
 [rblxutils](https://github.com/axellse/rblxutils) may be used as a reference implementation.
 ## questions
